@@ -1,3 +1,12 @@
+Tech Stack:
+
+- React
+- Mongo / MySQL
+- Material UI
+- Sass/Scss
+- Node
+- Express
+
 Views:
 
 - Admin
@@ -8,9 +17,24 @@ Views:
   - Export to CSV or Google Sheets. Customise csv outputs.
 
 - Student
+
   - Fill forms and Apply to listings
   - Edit profile data
   - View past applications
+
+- Pages: Student
+
+  - Sign-In
+  - Company List
+  - Past Applications
+  - Profile
+
+- Pages: Admin
+
+  - Sign-In
+  - Company List
+  - Applicants List
+  - Create new Company Application
 
 Student Profile:
 
