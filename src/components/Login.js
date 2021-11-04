@@ -1,6 +1,9 @@
 import { Typography, Button, Box } from "@material-ui/core";
 import React from "react";
 import { makeStyles } from "@material-ui/core";
+import { getAuth, GoogleAuthProvider, signInWithPopup, } from "firebase/auth";
+const google_provider = new GoogleAuthProvider();
+const auth = getAuth();
 
 const useStyles = makeStyles({
   loginHeading: {
@@ -17,6 +20,17 @@ const useStyles = makeStyles({
 export default function Login() {
   const classes = useStyles();
 
+  const SignInwithFirebase = () => {
+    ;
+    signInWithPopup(auth, google_provider)
+      .then((re) => {
+        console.log(re)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
   return (
     <div>
       <Typography className={classes.loginHeading} variant="h3" align="center">
@@ -26,7 +40,7 @@ export default function Login() {
         Login using institute email id only.
       </Typography>
       <Box textAlign="center">
-        <Button className={classes.btnStyling} variant="contained">
+        <Button className={classes.btnStyling} variant="contained" onClick={SignInwithFirebase}>
           SIGN IN WITH GOOGLE
         </Button>
       </Box>
