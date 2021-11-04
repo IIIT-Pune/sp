@@ -1,7 +1,9 @@
 import { Typography, Button, Box } from "@material-ui/core";
 import React from "react";
 import { makeStyles } from "@material-ui/core";
-import { firebase } from '../firebase/firebase'
+import { getAuth, GoogleAuthProvider, signInWithPopup, } from "firebase/auth";
+const google_provider = new GoogleAuthProvider();
+const auth = getAuth();
 
 const useStyles = makeStyles({
   loginHeading: {
@@ -19,8 +21,8 @@ export default function Login() {
   const classes = useStyles();
 
   const SignInwithFirebase = () => {
-    var google_provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(google_provider)
+    ;
+    signInWithPopup(auth, google_provider)
       .then((re) => {
         console.log(re)
       })
@@ -45,7 +47,3 @@ export default function Login() {
     </div>
   );
 }
-
-// export function currentUser() {
-//   return user;
-// }

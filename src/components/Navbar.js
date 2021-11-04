@@ -1,27 +1,28 @@
 import React from "react";
 import { AppBar, Toolbar, Button, Box } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { firebase } from "../firebase/firebase";
+import { getAuth, signOut } from "firebase/auth";
+const auth = getAuth();
 
 function IfSignedIn() {
   const logOut = () => {
-    firebase.auth().signOut()
+    signOut(auth)
       .then(() => console.log('signed out'));
   }
   return (
     <Toolbar>
+      <Button
+        variant="contained"
+        style={{ background: "white", marginLeft: "10px" }}
+      >
+        <Link to="/form" style={{ color: "black", textDecoration: "None" }}>Form</Link>
+      </Button>
       <Button
         onClick={logOut}
         variant="contained"
         style={{ background: "white", marginLeft: "10px" }}
       >
         <Link to="/login" style={{ color: "black", textDecoration: "None" }}>Logout</Link>
-      </Button>
-      <Button
-        variant="contained"
-        style={{ background: "white", marginLeft: "10px" }}
-      >
-        <Link to="/form" style={{ color: "black", textDecoration: "None" }}>Form</Link>
       </Button>
     </Toolbar>
   );
@@ -62,7 +63,7 @@ export default function Navbar() {
             <Link to="/about" style={{ color: "black", textDecoration: "None" }}>About</Link>
           </Button>
         </Box>
-        {firebase.auth().currentUser ? <IfSignedIn /> : <NotSignedIn />}
+        {auth.currentUser ? <IfSignedIn /> : <NotSignedIn />}
       </Toolbar>
     </AppBar>
   );

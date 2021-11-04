@@ -1,3 +1,4 @@
+import "./firebase/firebase";
 import "./styles/App.scss";
 import React, { useState } from "react";
 import { Typography } from "@material-ui/core";
@@ -6,14 +7,15 @@ import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import About from "./components/About";
 import Form from "./components/Form";
-import { firebase } from "./firebase/firebase";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+const auth = getAuth();
 // import { currentUser } from "./components/Login";
 // import { HomeIcon } from "@material-ui/icons";
 // import {HomeIcon} from '@mui/icons-material';
 
 function App() {
 	const [isUserSignedIn, setIsUserSignedIn] = useState(false);
-	firebase.auth().onAuthStateChanged((user) => {
+	onAuthStateChanged(auth, (user) => {
 		if (user) {
 			return setIsUserSignedIn(true);
 		}
@@ -48,8 +50,7 @@ const Homepg = (props) => (
 			Login to see further details
 		</Typography>
 		<Typography className='Body-text' align='center' style={{ marginTop: "1%" }}>
-			Logged in Username -{" "}
-			{firebase.auth().currentUser ? firebase.auth().currentUser.displayName : null}
+			Logged in Username - {auth.currentUser ? auth.currentUser.displayName : null}
 		</Typography>
 		<Typography className='Body-text' align='center' style={{ marginTop: "1%" }}>
 			Once the user is logged-in a "FORM" tab will appear in Navbar where details can be modified
