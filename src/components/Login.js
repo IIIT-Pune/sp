@@ -1,5 +1,6 @@
 import { Typography, Button, Box } from "@material-ui/core";
 import React from "react";
+import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core";
 import { getAuth, GoogleAuthProvider, signInWithPopup, } from "firebase/auth";
 const google_provider = new GoogleAuthProvider();
@@ -19,12 +20,13 @@ const useStyles = makeStyles({
 
 export default function Login() {
   const classes = useStyles();
+  const history= useHistory();
 
   const SignInwithFirebase = () => {
     ;
     signInWithPopup(auth, google_provider)
-      .then((re) => {
-        console.log(re)
+      .then(() => {
+        history.push("./Form")
       })
       .catch((err) => {
         console.log(err);
