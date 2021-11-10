@@ -1,9 +1,10 @@
-import React from 'react'
+import React from "react";
+import Studentforms from "../forms/studentforms";
 
 export default function Form() {
-    return (
-        <div>
-            Form here
-        </div>
-    )
+	return (
+		<div>
+			<Studentforms />
+		</div>
+	);
 }
