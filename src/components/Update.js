@@ -1,7 +1,7 @@
-import React, { useState, useContext } from "react";
-import {useHistory} from "react-router-dom";
+import React, {useState, useContext} from 'react';
+import { useHistory } from 'react-router';
 import {Datacontext} from "../context/FormContext"
-import { getAuth } from "@firebase/auth";
+import {getAuth} from "firebase/auth";
 import {
 	Grid,
 	Typography,
@@ -17,22 +17,32 @@ import {
 	MenuItem,
 	Button,
 } from "@mui/material";
-import {
-	getFirestore,
-	doc,
-	setDoc
-} from "firebase/firestore";
+import{
+    getFirestore,
+    doc,
+    updateDoc,
+    setDoc,
+    getDoc
+} from "firebase/firestore"
 
-const db = getFirestore();
-const auth= getAuth();
-const Studentforms = () => {
 
-	const {dataValues}=useContext(Datacontext);
-	const [formData, setformData] = dataValues;
-    const history = useHistory();
-
-    const createNew= async ()=>{
-        await setDoc(doc(db,"studentsDetails", auth.currentUser.email), {
+const db=getFirestore();
+const auth=getAuth();
+export default function Update() {
+    const userDocRef=doc(db, "studentsDetails", auth.currentUser.email)
+    
+    let docSnap
+        (async()=>{
+            docSnap = await getDoc(userDocRef);
+        })()
+        if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+        }
+    const submitUpdate= async ()=>{
+		await setDoc(userDocRef, {
             firstName:formData.firstName,
             lastName:formData.lastName,
             misNumber: formData.misNumber,
@@ -43,39 +53,30 @@ const Studentforms = () => {
             phoneNumber: formData.phoneNumber,
             cgpa: formData.cgpa,
             address: formData.address,
+        }, {merge: true})
+        .then(()=>{
+            alert("Updated Successfully!")
+            history.push("./Show");
         })
-    }
-
-	const onChange = (e) => {
+        .catch(()=>{
+            alert("Error occured")
+        })
+	}
+    // const {dataValues}=useContext(Datacontext);
+    const initialData=docSnap.data();
+	const [formData, setformData] = useState(initialData);
+    const history=useHistory();
+    const onChange = (e) => {
 		setformData({ ...formData, [e.target.name]: e.target.value });
 	};
-
-	// const onReset = (e) => {
-	// 	setformData(defaultData);
-	// };
-	const submitForm= async (e)=>{
-        e.preventDefault();
-
-            if(await window.confirm("Are you sure you want to Submit provided details?")){
-				createNew()
-				.then(()=>{
-					alert("Data stored Successfully!")
-					history.push("./Show");
-				})
-				.catch(()=>{
-					alert("Error occured")
-				})
-			}
-    }
-    
-	return (
-		<React.Fragment>
+    return (
+        <React.Fragment>
 			<Container maxWidth='sm'>
 				<Typography align='center' variant='h5' sx={{ m: 4 }}>
 					Student Form
 				</Typography>
 
-				<form onSubmit={submitForm}>
+				<form onSubmit={submitUpdate}>
 					<Grid container spacing={2} alignItems='center' justifyContent='center'>
 						<Grid item xs={12} sm={6}>
 							<TextField
@@ -228,12 +229,11 @@ const Studentforms = () => {
 							Reset
 						</Button> */}
 						<Button type='submit' sx={{ m: 2 }} variant='contained'>
-							Submit
+							Update
 						</Button>
 					</Grid>
 				</form>
 			</Container>
 		</React.Fragment>
-	)
+    )
 }
-export default Studentforms

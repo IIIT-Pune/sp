@@ -1,7 +1,6 @@
-import React, { useState, useContext } from "react";
-import {useHistory} from "react-router-dom";
-import {Datacontext} from "../context/FormContext"
-import { getAuth } from "@firebase/auth";
+import React, { useState, useCallback, useEffect } from "react";
+import { useHistory } from "react-router";
+import { getAuth } from "firebase/auth";
 import {
 	Grid,
 	Typography,
@@ -17,65 +16,74 @@ import {
 	MenuItem,
 	Button,
 } from "@mui/material";
-import {
-	getFirestore,
-	doc,
-	setDoc
-} from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
 const db = getFirestore();
-const auth= getAuth();
-const Studentforms = () => {
+const auth = getAuth();
 
-	const {dataValues}=useContext(Datacontext);
-	const [formData, setformData] = dataValues;
-    const history = useHistory();
+export default function Update() {
+	const [formData, setFormData] = useState();
+	const [initialData, setInitialData] = useState();
 
-    const createNew= async ()=>{
-        await setDoc(doc(db,"studentsDetails", auth.currentUser.email), {
-            firstName:formData.firstName,
-            lastName:formData.lastName,
-            misNumber: formData.misNumber,
-            email: formData.email,
-            gender: formData.gender,
-            dob: formData.dob,
-            yos: formData.yos,
-            phoneNumber: formData.phoneNumber,
-            cgpa: formData.cgpa,
-            address: formData.address,
-        })
-    }
+	const userDocRef = useCallback(() => {
+		if (auth?.currentUser) return doc(db, "studentsDetails", auth?.currentUser?.email);
+		return;
+	}, [auth?.currentUser]);
 
-	const onChange = (e) => {
-		setformData({ ...formData, [e.target.name]: e.target.value });
-	};
+	const history = useHistory();
 
-	// const onReset = (e) => {
-	// 	setformData(defaultData);
-	// };
-	const submitForm= async (e)=>{
-        e.preventDefault();
+	useEffect(() => {
+		if (userDocRef && auth)
+			(async () => {
+				const docSnap = await getDoc(userDocRef);
+				if (docSnap.exists()) {
+					setFormData(docSnap.data());
+					setInitialData(docSnap.data());
+				} else {
+					console.log("No such document!");
+					history.push("./Form");
+				}
+			})();
+	}, [userDocRef]);
 
-            if(await window.confirm("Are you sure you want to Submit provided details?")){
-				createNew()
-				.then(()=>{
-					alert("Data stored Successfully!")
+	const submitUpdate = (e) => {
+		e.preventDefault()
+		
+		if (initialData !== formData)
+			setDoc(userDocRef, {
+				firstName: formData.firstName,
+				lastName: formData.lastName,
+				misNumber: formData.misNumber,
+				email: formData.email,
+				gender: formData.gender,
+				dob: formData.dob,
+				branch: formData.branch,
+				yos: formData.yos,
+				phoneNumber: formData.phoneNumber,
+				cgpa: formData.cgpa,
+				address: formData.address,
+			})
+				.then(() => {
+					alert("Updated Successfully!");
 					history.push("./Show");
 				})
-				.catch(()=>{
-					alert("Error occured")
-				})
-			}
-    }
-    
-	return (
+				.catch(() => {
+					alert("Error occured");
+				});
+	};
+
+	const onChange = (e) => {
+		setFormData({ ...formData, [e.target.name]: e.target.value });
+	};
+
+	return initialData ? (
 		<React.Fragment>
 			<Container maxWidth='sm'>
 				<Typography align='center' variant='h5' sx={{ m: 4 }}>
 					Student Form
 				</Typography>
 
-				<form onSubmit={submitForm}>
+				<form onSubmit={submitUpdate}>
 					<Grid container spacing={2} alignItems='center' justifyContent='center'>
 						<Grid item xs={12} sm={6}>
 							<TextField
@@ -85,7 +93,7 @@ const Studentforms = () => {
 								label='First Name'
 								variant='standard'
 								name='firstName'
-								value={formData.firstName}
+								value={formData?.firstName}
 								onChange={onChange}
 							/>
 						</Grid>
@@ -97,7 +105,7 @@ const Studentforms = () => {
 								label='Last Name'
 								variant='standard'
 								name='lastName'
-								value={formData.lastName}
+								value={formData?.lastName}
 								onChange={onChange}
 							/>
 						</Grid>
@@ -109,7 +117,7 @@ const Studentforms = () => {
 								label='MIS Number'
 								variant='standard'
 								name='misNumber'
-								value={formData.misNumber}
+								value={formData?.misNumber}
 								onChange={onChange}
 							/>
 						</Grid>
@@ -121,7 +129,7 @@ const Studentforms = () => {
 								label='Email Id'
 								variant='standard'
 								name='email'
-								value={formData.email}
+								value={formData?.email}
 								onChange={onChange}
 							/>
 						</Grid>
@@ -132,11 +140,11 @@ const Studentforms = () => {
 									row
 									aria-label='gender'
 									name='gender'
-									value={formData.gender}
+									value={formData?.gender}
 									onChange={onChange}>
-									<FormControlLabel value='male' control={<Radio />} label='Male' />
-									<FormControlLabel value='female' control={<Radio />} label='Female' />
-									<FormControlLabel value='other' control={<Radio />} label='Other' />
+									<FormControlLabel value='Male' control={<Radio />} label='Male' />
+									<FormControlLabel value='Female' control={<Radio />} label='Female' />
+									<FormControlLabel value='Other' control={<Radio />} label='Other' />
 								</RadioGroup>
 							</FormControl>
 						</Grid>
@@ -148,7 +156,7 @@ const Studentforms = () => {
 								label='DOB'
 								type='date'
 								name='dob'
-								value={formData.dob}
+								value={formData?.dob}
 								onChange={onChange}
 								sx={{ width: 260 }}
 								InputLabelProps={{
@@ -163,13 +171,13 @@ const Studentforms = () => {
 									labelId='year-of-study'
 									name='yos'
 									id='year-of-study'
-									value={formData.yos}
+									value={formData?.yos}
 									label='Year of Study'
 									onChange={onChange}>
-									<MenuItem value={"First"}>1st</MenuItem>
-									<MenuItem value={"Second"}>2nd</MenuItem>
-									<MenuItem value={"Third"}>3rd</MenuItem>
-									<MenuItem value={"Fourth"}>4th</MenuItem>
+									<MenuItem value={"First"}>First</MenuItem>
+									<MenuItem value={"Second"}>Second</MenuItem>
+									<MenuItem value={"Third"}>Third</MenuItem>
+									<MenuItem value={"Fourth"}>Fourth</MenuItem>
 								</Select>
 							</FormControl>
 						</Grid>
@@ -181,7 +189,7 @@ const Studentforms = () => {
 									id='branch'
 									label='Branch'
 									name='branch'
-									value={formData.branch}
+									value={formData?.branch}
 									onChange={onChange}>
 									<MenuItem value={"CSE"}>CSE</MenuItem>
 									<MenuItem value={"ECE"}>ECE</MenuItem>
@@ -196,7 +204,7 @@ const Studentforms = () => {
 								label='Phone Number'
 								variant='standard'
 								name='phoneNumber'
-								value={formData.phoneNumber}
+								value={formData?.phoneNumber}
 								onChange={onChange}
 							/>
 						</Grid>
@@ -208,7 +216,7 @@ const Studentforms = () => {
 								label='CGPA'
 								variant='standard'
 								name='cgpa'
-								value={formData.cgpa}
+								value={formData?.cgpa}
 								onChange={onChange}
 							/>
 						</Grid>
@@ -220,7 +228,7 @@ const Studentforms = () => {
 								label='Address'
 								variant='standard'
 								name='address'
-								value={formData.address}
+								value={formData?.address}
 								onChange={onChange}
 							/>
 						</Grid>
@@ -228,12 +236,13 @@ const Studentforms = () => {
 							Reset
 						</Button> */}
 						<Button type='submit' sx={{ m: 2 }} variant='contained'>
-							Submit
+							Update
 						</Button>
 					</Grid>
 				</form>
 			</Container>
 		</React.Fragment>
-	)
+	) : (
+		<>nothing here</>
+	);
 }
-export default Studentforms

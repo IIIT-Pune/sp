@@ -1,10 +1,13 @@
 import { Typography, Button, Box } from "@material-ui/core";
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Redirect } from "react-router-dom";
 import { makeStyles } from "@material-ui/core";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+
 const google_provider = new GoogleAuthProvider();
 const auth = getAuth();
+const db = getFirestore();
 
 const useStyles = makeStyles({
 	loginHeading: {
@@ -24,16 +27,18 @@ export default function Login() {
 
 	const SignInwithFirebase = () => {
 		signInWithPopup(auth, google_provider)
-			.then(() => {
-				history.push("./Form");
+			.then(async() => {
+				const docSnap = await getDoc(doc(db, "studentsDetails", auth?.currentUser?.email));
+				if(!docSnap.exists())
+					history.push("./Form");
 			})
 			.catch((err) => {
 				console.log(err);
 			});
 	};
-
-	return (
-		<div>
+	function IfSignedIn(){
+		return(
+			<div>
 			<Typography className={classes.loginHeading} variant='h3' align='center'>
 				Login
 			</Typography>
@@ -44,5 +49,9 @@ export default function Login() {
 				</Button>
 			</Box>
 		</div>
+		);
+	}
+	return(
+		auth.currentUser? <Redirect to="/"/>: <IfSignedIn/>
 	);
 }
