@@ -41,7 +41,7 @@ function App() {
 					<DataProvider>
 						<ProtectedFormRoute path='/form' exact component={Form} />
 						<ProtectedFormRoute exact path="/show" component={Show}/>
-						<Route path='/updateNew' exact component={Update} />
+						<ProtectedFormRoute path='/updateNew' exact component={Update} />
 					</DataProvider>
 					
 				</Switch>
