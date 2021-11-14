@@ -7,7 +7,10 @@ import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import About from "./components/About";
 import Form from "./components/Form";
-import  {ProtectedRoute}  from "./ProtectedRoute";
+import Show from "./components/Show";
+import Update from "./components/UpdateNew";
+import  {ProtectedFormRoute}  from "./ProtectedRoute";
+import { DataProvider } from "./context/FormContext";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 const auth = getAuth();
 // import { currentUser } from "./components/Login";
@@ -35,7 +38,12 @@ function App() {
 					</Route>
 					<Route path='/login' exact component={Login} />
 					<Route path='/about' exact component={About} />
-					<ProtectedRoute path='/form' exact component={Form} />
+					<DataProvider>
+						<ProtectedFormRoute path='/form' exact component={Form} />
+						<ProtectedFormRoute exact path="/show" component={Show}/>
+						<ProtectedFormRoute path='/updateNew' exact component={Update} />
+					</DataProvider>
+					
 				</Switch>
 			</div>
 		</Router>

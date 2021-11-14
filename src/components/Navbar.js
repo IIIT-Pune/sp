@@ -15,6 +15,11 @@ function IfSignedIn() {
 					Form
 				</Button>
 			</Link>
+			<Link to='/show' style={{ color: "black", textDecoration: "None" }}>
+				<Button variant='contained' style={{ background: "white", marginLeft: "10px" }}>
+					Show
+				</Button>
+			</Link>
 
 			<Link to='/login' style={{ color: "black", textDecoration: "None" }}>
 				<Button
