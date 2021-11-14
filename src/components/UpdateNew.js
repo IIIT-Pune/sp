@@ -16,7 +16,7 @@ import {
 	MenuItem,
 	Button,
 } from "@mui/material";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
 
 const db = getFirestore();
 const auth = getAuth();
@@ -25,10 +25,7 @@ export default function Update() {
 	const [formData, setFormData] = useState();
 	const [initialData, setInitialData] = useState();
 
-	const userDocRef = useCallback(() => {
-		if (auth?.currentUser) return doc(db, "studentsDetails", auth?.currentUser?.email);
-		return;
-	}, [auth?.currentUser]);
+	const userDocRef = doc(db, "studentsDetails", auth?.currentUser?.email)
 
 	const history = useHistory();
 
@@ -39,18 +36,19 @@ export default function Update() {
 				if (docSnap.exists()) {
 					setFormData(docSnap.data());
 					setInitialData(docSnap.data());
+					console.log("rendered")
 				} else {
 					console.log("No such document!");
 					history.push("./Form");
 				}
 			})();
-	}, [userDocRef]);
+	}, []);
 
 	const submitUpdate = (e) => {
 		e.preventDefault()
 		
 		if (initialData !== formData)
-			setDoc(userDocRef, {
+			updateDoc(userDocRef, {
 				firstName: formData.firstName,
 				lastName: formData.lastName,
 				misNumber: formData.misNumber,
@@ -243,6 +241,6 @@ export default function Update() {
 			</Container>
 		</React.Fragment>
 	) : (
-		<>nothing here</>
+		<></>
 	);
 }

@@ -9,8 +9,9 @@ const db = getFirestore();
 const auth = getAuth();
 
 export default function Show() {
-	const { dataValues } = useContext(Datacontext);
+	const { dataValues, dataFlag } = useContext(Datacontext);
 	const [formData, setFormData] = dataValues;
+	const [flag, setFlag]=dataFlag;
 
 	const userDocRef = doc(db, "studentsDetails", auth?.currentUser?.email);
 	const getDocument = () => {
@@ -18,18 +19,22 @@ export default function Show() {
 			(async () => {
 				const docSnap = await getDoc(userDocRef);
 				if (docSnap.exists()) {
-					console.log(docSnap.data());
+					// console.log(docSnap.data());
+					console.log("rendered")
+					setFlag(true)
 					setFormData({
 						firstName: docSnap.data().firstName,
 						lastName: docSnap.data().lastName,
 						misNumber: docSnap.data().misNumber,
 						email: docSnap.data().email,
-						gender: docSnap.data().gender,
+						gender: docSnap.data().gender,		
 						dob: docSnap.data().dob,
+						branch: docSnap.data().branch,
 						yos: docSnap.data().yos,
 						phoneNumber: docSnap.data().phoneNumber,
 						cgpa: docSnap.data().cgpa,
 						address: docSnap.data().address,
+						
 					});
 				} else {
 					console.log("No such document!");
