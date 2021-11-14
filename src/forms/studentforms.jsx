@@ -40,9 +40,11 @@ const Studentforms = () => {
             gender: formData.gender,
             dob: formData.dob,
             yos: formData.yos,
+			branch: formData.branch,
             phoneNumber: formData.phoneNumber,
             cgpa: formData.cgpa,
             address: formData.address,
+			filled: formData.filled,
         })
     }
 
@@ -72,11 +74,12 @@ const Studentforms = () => {
 		<React.Fragment>
 			<Container maxWidth='sm'>
 				<Typography align='center' variant='h5' sx={{ m: 4 }}>
-					Student Form
+					Student Details
 				</Typography>
 
 				<form onSubmit={submitForm}>
 					<Grid container spacing={2} alignItems='center' justifyContent='center'>
+						{formData.filled=true}
 						<Grid item xs={12} sm={6}>
 							<TextField
 								required
@@ -134,9 +137,9 @@ const Studentforms = () => {
 									name='gender'
 									value={formData.gender}
 									onChange={onChange}>
-									<FormControlLabel value='male' control={<Radio />} label='Male' />
-									<FormControlLabel value='female' control={<Radio />} label='Female' />
-									<FormControlLabel value='other' control={<Radio />} label='Other' />
+									<FormControlLabel value='Male' control={<Radio />} label='Male' />
+									<FormControlLabel value='Female' control={<Radio />} label='Female' />
+									<FormControlLabel value='Other' control={<Radio />} label='Other' />
 								</RadioGroup>
 							</FormControl>
 						</Grid>

@@ -50,19 +50,26 @@ function App() {
 	);
 }
 
+const greetUser = (userLogged) =>{
+	if (userLogged){
+		return <p>Hello, {userLogged.displayName}</p> ;
+	}
+}
+
 const Homepg = (props) => (
 	<div>
 		<Typography variant='h3' align='center' style={{ marginTop: "1%" }}>
 			Home Page
 		</Typography>
 		<Typography className='Body-text' align='center' style={{ marginTop: "1%" }}>
-			Login to see further details
+			{auth.currentUser ? null : `Login to see further details`}
+		</Typography>
+		<Typography variant='h6' className='Body-text' align='center' style={{ marginTop: "1%" }}>
+			{/* "Logged in Username -" {auth.currentUser ? auth.currentUser.displayName : null} */}
+			{greetUser(auth.currentUser)}
 		</Typography>
 		<Typography className='Body-text' align='center' style={{ marginTop: "1%" }}>
-			Logged in Username - {auth.currentUser ? auth.currentUser.displayName : null}
-		</Typography>
-		<Typography className='Body-text' align='center' style={{ marginTop: "1%" }}>
-			Once the user is logged-in a "FORM" tab will appear in Navbar where details can be modified
+			Modify basic information using "Form" tab
 		</Typography>
 	</div>
 );
