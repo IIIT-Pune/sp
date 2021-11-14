@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
-import {useHistory} from "react-router-dom";
-import {Datacontext} from "../context/FormContext"
+import { useHistory } from "react-router-dom";
+import { Datacontext } from "../context/FormContext";
 import { getAuth } from "@firebase/auth";
 import {
 	Grid,
@@ -17,59 +17,57 @@ import {
 	MenuItem,
 	Button,
 } from "@mui/material";
-import {
-	getFirestore,
-	doc,
-	setDoc
-} from "firebase/firestore";
+import { Controller, useForm } from "react-hook-form";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 const db = getFirestore();
-const auth= getAuth();
+const auth = getAuth();
+
 const Studentforms = () => {
-
-	const {dataValues}=useContext(Datacontext);
+	const { dataValues } = useContext(Datacontext);
 	const [formData, setformData] = dataValues;
-    const history = useHistory();
+	const history = useHistory();
 
-    const createNew= async ()=>{
-        await setDoc(doc(db,"studentsDetails", auth.currentUser.email), {
-            firstName:formData.firstName,
-            lastName:formData.lastName,
-            misNumber: formData.misNumber,
-            email: formData.email,
-            gender: formData.gender,
-            dob: formData.dob,
-            yos: formData.yos,
+	const createNew = async () => {
+		await setDoc(doc(db, "studentsDetails", auth.currentUser.email), {
+			firstName: formData.firstName,
+			lastName: formData.lastName,
+			misNumber: formData.misNumber,
+			email: formData.email,
+			gender: formData.gender,
+			dob: formData.dob,
+			yos: formData.yos,
 			branch: formData.branch,
-            phoneNumber: formData.phoneNumber,
-            cgpa: formData.cgpa,
-            address: formData.address,
+			phoneNumber: formData.phoneNumber,
+			cgpa: formData.cgpa,
+			address: formData.address,
 			filled: formData.filled,
-        })
-    }
-
-	const onChange = (e) => {
-		setformData({ ...formData, [e.target.name]: e.target.value });
+		});
 	};
 
 	// const onReset = (e) => {
 	// 	setformData(defaultData);
 	// };
-	const submitForm= async (e)=>{
-        e.preventDefault();
+	const submitForm = async (e) => {
+		// e.preventDefault();
+		setformData(e);
 
-            if(await window.confirm("Are you sure you want to Submit provided details?")){
-				createNew()
-				.then(()=>{
-					alert("Data stored Successfully!")
+		if (await window.confirm("Are you sure you want to Submit provided details?")) {
+			createNew()
+				.then(() => {
+					alert("Data stored Successfully!");
 					history.push("./Show");
 				})
-				.catch(()=>{
-					alert("Error occured")
-				})
-			}
-    }
-    
+				.catch(() => {
+					alert("Error occured");
+				});
+		}
+	};
+
+	const { control, handleSubmit, reset } = useForm({
+		defaultValues: formData,
+	});
+
 	return (
 		<React.Fragment>
 			<Container maxWidth='sm'>
@@ -77,154 +75,213 @@ const Studentforms = () => {
 					Student Details
 				</Typography>
 
-				<form onSubmit={submitForm}>
+				<form onSubmit={handleSubmit(submitForm)}>
 					<Grid container spacing={2} alignItems='center' justifyContent='center'>
-						{formData.filled=true}
+						{(formData.filled = true)}
+
 						<Grid item xs={12} sm={6}>
-							<TextField
-								required
-								fullWidth
-								id='firstName'
-								label='First Name'
-								variant='standard'
+							<Controller
 								name='firstName'
-								value={formData.firstName}
-								onChange={onChange}
+								control={control}
+								render={({ field: { value, onChange } }) => (
+									<TextField
+										onChange={onChange}
+										value={value}
+										variant='standard'
+										label='First Name'
+										name='firstName'
+										required
+										fullWidth
+									/>
+								)}
 							/>
 						</Grid>
 						<Grid item xs={12} sm={6}>
-							<TextField
-								required
-								fullWidth
-								id='lastName'
-								label='Last Name'
-								variant='standard'
+							<Controller
 								name='lastName'
-								value={formData.lastName}
-								onChange={onChange}
+								control={control}
+								render={({ field: { value, onChange } }) => (
+									<TextField
+										onChange={onChange}
+										value={value}
+										variant='standard'
+										label='Last Name'
+										name='lastName'
+										required
+										fullWidth
+									/>
+								)}
 							/>
 						</Grid>
 						<Grid item xs={12} sm={6}>
-							<TextField
-								required
-								fullWidth
-								id='misNumber'
-								label='MIS Number'
-								variant='standard'
+							<Controller
 								name='misNumber'
-								value={formData.misNumber}
-								onChange={onChange}
+								control={control}
+								render={({ field: { value, onChange } }) => (
+									<TextField
+										onChange={onChange}
+										value={value}
+										variant='standard'
+										label='MIS Number'
+										required
+										fullWidth
+									/>
+								)}
 							/>
 						</Grid>
 						<Grid item xs={12} sm={6}>
-							<TextField
-								required
-								fullWidth
-								id='email'
-								label='Email Id'
-								variant='standard'
+							<Controller
 								name='email'
-								value={formData.email}
-								onChange={onChange}
+								control={control}
+								render={({ field: { value, onChange } }) => (
+									<TextField
+										onChange={onChange}
+										value={value}
+										variant='standard'
+										label='Email Id'
+										required
+										fullWidth
+										name='email'
+									/>
+								)}
 							/>
 						</Grid>
+
 						<Grid item>
 							<FormControl required component='fieldset'>
 								<FormLabel component='legend'>Gender</FormLabel>
-								<RadioGroup
-									row
-									aria-label='gender'
+
+								<Controller
 									name='gender'
-									value={formData.gender}
-									onChange={onChange}>
-									<FormControlLabel value='Male' control={<Radio />} label='Male' />
-									<FormControlLabel value='Female' control={<Radio />} label='Female' />
-									<FormControlLabel value='Other' control={<Radio />} label='Other' />
-								</RadioGroup>
+									control={control}
+									render={({ field: { value, onChange } }) => (
+										<RadioGroup
+											row
+											aria-label='gender'
+											name='gender'
+											value={value}
+											onChange={onChange}>
+											<FormControlLabel value='Male' control={<Radio />} label='Male' />
+											<FormControlLabel value='Female' control={<Radio />} label='Female' />
+											<FormControlLabel value='Other' control={<Radio />} label='Other' />
+										</RadioGroup>
+									)}
+								/>
 							</FormControl>
 						</Grid>
 						<Grid item>
-							<TextField
-								variant='standard'
-								required
-								id='date'
-								label='DOB'
-								type='date'
+							<Controller
 								name='dob'
-								value={formData.dob}
-								onChange={onChange}
-								sx={{ width: 260 }}
-								InputLabelProps={{
-									shrink: true,
-								}}
+								control={control}
+								render={({ field: { value, onChange } }) => (
+									<TextField
+										onChange={onChange}
+										value={value}
+										variant='standard'
+										label='DOB'
+										required
+										fullWidth
+										name='dob'
+										type='date'
+										sx={{ width: 260 }}
+										InputLabelProps={{
+											shrink: true,
+										}}
+									/>
+								)}
 							/>
 						</Grid>
 						<Grid item>
 							<FormControl variant='standard' required sx={{ minWidth: 268 }}>
 								<InputLabel id='year-of-study'>Year Of Study</InputLabel>
-								<Select
-									labelId='year-of-study'
+								<Controller
 									name='yos'
-									id='year-of-study'
-									value={formData.yos}
-									label='Year of Study'
-									onChange={onChange}>
-									<MenuItem value={"First"}>1st</MenuItem>
-									<MenuItem value={"Second"}>2nd</MenuItem>
-									<MenuItem value={"Third"}>3rd</MenuItem>
-									<MenuItem value={"Fourth"}>4th</MenuItem>
-								</Select>
+									control={control}
+									render={({ field: { value, onChange } }) => (
+										<Select
+											labelId='year-of-study'
+											id='year-of-study'
+											value={value}
+											label='Year of Study'
+											onChange={onChange}>
+											<MenuItem value={"First"}>1st</MenuItem>
+											<MenuItem value={"Second"}>2nd</MenuItem>
+											<MenuItem value={"Third"}>3rd</MenuItem>
+											<MenuItem value={"Fourth"}>4th</MenuItem>
+										</Select>
+									)}
+								/>
 							</FormControl>
 						</Grid>
 						<Grid item>
 							<FormControl variant='standard' required sx={{ minWidth: 268 }}>
 								<InputLabel id='branch'>Branch</InputLabel>
-								<Select
-									labelId='branch'
-									id='branch'
-									label='Branch'
+								<Controller
 									name='branch'
-									value={formData.branch}
-									onChange={onChange}>
-									<MenuItem value={"CSE"}>CSE</MenuItem>
-									<MenuItem value={"ECE"}>ECE</MenuItem>
-								</Select>
+									control={control}
+									render={({ field: { value, onChange } }) => (
+										<Select
+											labelId='branch'
+											id='branch'
+											label='Branch'
+											name='branch'
+											value={value}
+											onChange={onChange}>
+											<MenuItem value={"CSE"}>CSE</MenuItem>
+											<MenuItem value={"ECE"}>ECE</MenuItem>
+										</Select>
+									)}
+								/>
 							</FormControl>
 						</Grid>
 						<Grid item xs={12} sm={6}>
-							<TextField
-								required
-								fullWidth
-								id='phoneNumber'
-								label='Phone Number'
-								variant='standard'
+							<Controller
 								name='phoneNumber'
-								value={formData.phoneNumber}
-								onChange={onChange}
+								control={control}
+								render={({ field: { value, onChange } }) => (
+									<TextField
+										onChange={onChange}
+										value={value}
+										variant='standard'
+										label='Phone Number'
+										required
+										fullWidth
+										name='phoneNumber'
+									/>
+								)}
 							/>
 						</Grid>
 						<Grid item xs={12} sm={6}>
-							<TextField
-								required
-								fullWidth
-								id='cgpa'
-								label='CGPA'
-								variant='standard'
+							<Controller
 								name='cgpa'
-								value={formData.cgpa}
-								onChange={onChange}
+								control={control}
+								render={({ field: { value, onChange } }) => (
+									<TextField
+										onChange={onChange}
+										value={value}
+										variant='standard'
+										label='CGPA'
+										required
+										fullWidth
+									/>
+								)}
 							/>
 						</Grid>
 						<Grid item xs={12}>
-							<TextField
-								required
-								fullWidth
-								id='address'
-								label='Address'
-								variant='standard'
+							<Controller
 								name='address'
-								value={formData.address}
-								onChange={onChange}
+								control={control}
+								render={({ field: { value, onChange } }) => (
+									<TextField
+										onChange={onChange}
+										value={value}
+										variant='standard'
+										label='Address'
+										name='address'
+										required
+										fullWidth
+									/>
+								)}
 							/>
 						</Grid>
 						{/* <Button sx={{ m: 2 }} variant='outlined' onClick={onReset}>
@@ -237,6 +294,6 @@ const Studentforms = () => {
 				</form>
 			</Container>
 		</React.Fragment>
-	)
-}
-export default Studentforms
+	);
+};
+export default Studentforms;
