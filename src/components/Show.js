@@ -47,8 +47,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Show() {
 	const classes = useStyles();
-	const { dataValues } = useContext(Datacontext);
+	const { dataValues, dataFlag } = useContext(Datacontext);
 	const [formData, setFormData] = dataValues;
+	const [flag, setFlag] = dataFlag;
 
 	const userDocRef = doc(db, "studentsDetails", auth?.currentUser?.email);
 	const getDocument = () => {
@@ -56,7 +57,9 @@ export default function Show() {
 			(async () => {
 				const docSnap = await getDoc(userDocRef);
 				if (docSnap.exists()) {
-					console.log(docSnap.data());
+					// console.log(docSnap.data());
+					setFlag(true);
+					console.log("rendered");
 					setFormData({
 						firstName: docSnap.data().firstName,
 						lastName: docSnap.data().lastName,
@@ -136,7 +139,7 @@ export default function Show() {
 				</Table>
 			</TableContainer>
 
-			<Link to='/form' style={{ color: "white", textDecoration: "None" }}>
+			<Link to='/UpdateNew' style={{ color: "white", textDecoration: "None" }}>
 				<Button
 					variant='contained'
 					style={{ color: "white", background: "#3f51b5", marginLeft: "10px" }}>

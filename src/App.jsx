@@ -9,7 +9,7 @@ import About from "./components/About";
 import Form from "./components/Form";
 import Show from "./components/Show";
 import Update from "./components/UpdateNew";
-import  {ProtectedFormRoute}  from "./ProtectedRoute";
+import { ProtectedFormRoute } from "./ProtectedRoute";
 import { DataProvider } from "./context/FormContext";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 const auth = getAuth();
@@ -31,30 +31,29 @@ function App() {
 	return (
 		<Router>
 			<div className='App'>
-				<Navbar />
-				<Switch>
-					<Route path='/' exact>
-						<Homepg />
-					</Route>
-					<Route path='/login' exact component={Login} />
-					<Route path='/about' exact component={About} />
-					<DataProvider>
+				<DataProvider>
+					<Navbar />
+					<Switch>
+						<Route path='/' exact>
+							<Homepg />
+						</Route>
+						<Route path='/login' exact component={Login} />
+						<Route path='/about' exact component={About} />
 						<ProtectedFormRoute path='/form' exact component={Form} />
-						<ProtectedFormRoute exact path="/show" component={Show}/>
+						<ProtectedFormRoute exact path='/show' component={Show} />
 						<ProtectedFormRoute path='/updateNew' exact component={Update} />
-					</DataProvider>
-					
-				</Switch>
+					</Switch>
+				</DataProvider>
 			</div>
 		</Router>
 	);
 }
 
-const greetUser = (userLogged) =>{
-	if (userLogged){
-		return <p>Hello, {userLogged.displayName}</p> ;
+const greetUser = (userLogged) => {
+	if (userLogged) {
+		return <p>Hello, {userLogged.displayName}</p>;
 	}
-}
+};
 
 const Homepg = (props) => (
 	<div>
