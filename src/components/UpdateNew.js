@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router";
 import { getAuth } from "firebase/auth";
 import {
@@ -25,10 +25,7 @@ export default function Update() {
 	const [formData, setFormData] = useState();
 	const [initialData, setInitialData] = useState();
 
-	const userDocRef = useCallback(() => {
-		if (auth?.currentUser) return doc(db, "studentsDetails", auth?.currentUser?.email);
-		return;
-	}, [auth?.currentUser]);
+	const userDocRef = doc(db, "studentsDetails", auth?.currentUser?.email)
 
 	const history = useHistory();
 
@@ -39,12 +36,13 @@ export default function Update() {
 				if (docSnap.exists()) {
 					setFormData(docSnap.data());
 					setInitialData(docSnap.data());
+					console.log("rendered")
 				} else {
 					console.log("No such document!");
 					history.push("./Form");
 				}
 			})();
-	}, [userDocRef]);
+	}, []);
 
 	const submitUpdate = (e) => {
 		e.preventDefault()
@@ -243,6 +241,6 @@ export default function Update() {
 			</Container>
 		</React.Fragment>
 	) : (
-		<>nothing here</>
+		<></>
 	);
 }

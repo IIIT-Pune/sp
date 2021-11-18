@@ -29,8 +29,9 @@ export default function Login() {
 		signInWithPopup(auth, google_provider)
 			.then(async() => {
 				const docSnap = await getDoc(doc(db, "studentsDetails", auth?.currentUser?.email));
-				if(!docSnap.exists())
-					history.push("./Form");
+				if(docSnap.exists())
+					history.push("/Show");
+				else history.push("/Form")
 			})
 			.catch((err) => {
 				console.log(err);

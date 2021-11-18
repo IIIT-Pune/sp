@@ -1,25 +1,53 @@
-import React from "react";
+import React, { useContext } from "react";
 import { AppBar, Toolbar, Button, Box } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
+import { Datacontext } from "../context/FormContext";
 const auth = getAuth();
 
+const IsSubmited = () => {
+	const { dataFlag } = useContext(Datacontext);
+	const [flag, setFlag] = dataFlag;
+
+	return !flag ? (
+		<Link to='/Form' style={{ color: "black", textDecoration: "None" }}>
+			<Button variant='contained' style={{ background: "white", marginLeft: "10px" }}>
+				Form
+			</Button>
+		</Link>
+	) : (
+		<Link to='/Show' style={{ color: "black", textDecoration: "None" }}>
+			<Button variant='contained' style={{ background: "white", marginLeft: "10px" }}>
+				Show
+			</Button>
+		</Link>
+	);
+};
 function IfSignedIn() {
+	const { dataValues, dataFlag } = useContext(Datacontext);
+	const [formData, setformData] = dataValues;
+	const [flag, setFlag] = dataFlag;
+
 	const logOut = () => {
 		signOut(auth).then(() => console.log("signed out"));
+		setformData({
+			firstName: "",
+			lastName: "",
+			misNumber: "",
+			email: "",
+			gender: "",
+			dob: "",
+			yos: "",
+			branch: "",
+			phoneNumber: "",
+			cgpa: "",
+			address: "",
+		});
+		setFlag(false);
 	};
 	return (
 		<Toolbar>
-			<Link to='/form' style={{ color: "black", textDecoration: "None" }}>
-				<Button variant='contained' style={{ background: "white", marginLeft: "10px" }}>
-					Form
-				</Button>
-			</Link>
-			<Link to='/show' style={{ color: "black", textDecoration: "None" }}>
-				<Button variant='contained' style={{ background: "white", marginLeft: "10px" }}>
-					Show
-				</Button>
-			</Link>
+			<IsSubmited />
 
 			<Link to='/login' style={{ color: "black", textDecoration: "None" }}>
 				<Button
